@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Sensor {
 	public enum SignOrientation {
-		NORTH (1), EAST (2), SOUTH(3), WEST (4)
+		NORTH, EAST, SOUTH, WEST
 	}
 
 	/**
