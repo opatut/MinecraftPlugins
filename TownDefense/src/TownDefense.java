@@ -20,6 +20,9 @@ public class TownDefense extends Plugin  {
 	public void initialize() {
 		log.info(name + " " + version + " by " + author + " initialized");
 		etc.getLoader().addListener( PluginLoader.Hook.SIGN_CHANGE, mSensorBlockListener, this, PluginListener.Priority.MEDIUM);
+		etc.getLoader().addListener( PluginLoader.Hook.BLOCK_RIGHTCLICKED, mSensorBlockListener, this, PluginListener.Priority.MEDIUM);
+		
+		// Tick Patch
 		TickPatch.applyPatch();
 		Runnable onTick = new Runnable(){ public void run() {mSensorBlockListener.onTick();}};
 		TickPatch.addTask(TickPatch.wrapRunnable(this,onTick));

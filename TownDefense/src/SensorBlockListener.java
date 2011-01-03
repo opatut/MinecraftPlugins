@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -23,6 +24,13 @@ public class SensorBlockListener extends PluginListener {
 		}
 	}
 	
+	public void onBlockRightClicked(Player player,Block blockClicked,Item item) {
+		Sensor s = GetSensorAt(new Location(blockClicked.getX(),blockClicked.getY(),blockClicked.getZ()));
+		if (s != null) {
+			s.OnRightClickSign();
+		}
+	}
+	
 	private Sensor GetSensorAt(Location loc) {
 		for(Sensor s:mSensorList) {
 			if ((int)s.mSignLocation.x == (int)loc.x &&
@@ -37,13 +45,10 @@ public class SensorBlockListener extends PluginListener {
 	public boolean onBlockBreak(Player player, Block block) {
 		if (block.blockType == Block.Type.SignPost) {
 			// remove sensor with that sign location
-			for(Sensor s:mSensorList) {
-				if ((int)s.mSignLocation.x == (int)block.getX() &&
-						(int)s.mSignLocation.y == (int)block.getY() &&
-						(int)s.mSignLocation.z == (int)block.getZ()) {
-					mSensorList.remove(s);
-					player.sendMessage(mMessagePrefix + "You removed a sensor.");
-				}
+			Sensor s = GetSensorAt(new Location(block.getX(), block.getY(), block.getZ()));
+			if (s != null) {
+				mSensorList.remove(s);
+				player.sendMessage(mMessagePrefix + "You removed a sensor.");
 			}
 		}
 		return false;
@@ -74,7 +79,18 @@ public class SensorBlockListener extends PluginListener {
 						duration = d;
 				}
 				
-				Sensor s = new Sensor(new Location(sign.getX(), sign.getY(), sign.getZ()), 
+				Sensor.SignOrientation o = Sensor.SignOrientation.SOUTH;
+				int data = sign.getBlock().getData();
+				if (data == 0x2) o = Sensor.SignOrientation.EAST;
+				else if (data == 0x3) o = Sensor.SignOrientation.WEST;
+				else if (data == 0x4) o = Sensor.SignOrientation.NORTH;
+				else if (data == 0x5) o = Sensor.SignOrientation.SOUTH;
+				else {
+					Logger.getLogger("Minecraft").severe("Invalid sign data: " + data);
+					throw new RuntimeException("Invalid sign data.");
+				}
+				
+				Sensor s = new Sensor(new Location(sign.getX(), sign.getY(), sign.getZ()), o, 
 						length, duration);
 				mSensorList.add(s);
 				
@@ -85,7 +101,7 @@ public class SensorBlockListener extends PluginListener {
 				sign.setText(0, "[SENSOR] " + length + " " + duration);
 				sign.update();
 			} catch (NumberFormatException e) {
-				
+				player.sendMessage(mMessagePrefix+"Invalid sign format. See §f/towndefense help sensor "+mMessageColor+" for help.");
 			}
 		}
 		return false;
