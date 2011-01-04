@@ -36,14 +36,14 @@ public class SpawnPointList {
 	public void SaveToFile() {
 		PropertiesFile f = new PropertiesFile(filename);
 		for (SpawnPoint p: spawnPoints) {
-			f.setString(p.group, p.getLocationString());
+			f.setString(p.getGroup(), p.getLocationString());
 		}
 		f.save();
 	}
 	
 	public void setPoint(SpawnPoint p) {
 		for(SpawnPoint p2: spawnPoints) {
-			if(p2.group == p.group) {
+			if(p2.getGroup() == p.getGroup()) {
 				p2.location = p.location;
 				SaveToFile();
 				LoadFromFile();
@@ -55,15 +55,19 @@ public class SpawnPointList {
 		LoadFromFile();
 	}
 	
-	public void delPoint(String grp) {
-		for(SpawnPoint p2: spawnPoints) {
-			if(p2.group == grp) {
-				spawnPoints.remove(p2);
-				SaveToFile();
+	public boolean delPoint(String grp) {
+		for(SpawnPoint p: spawnPoints) {
+			if(p.getGroup().equalsIgnoreCase(grp)) {
+				spawnPoints.remove(p);
+				//save
+				PropertiesFile f = new PropertiesFile(filename);
+				f.removeKey(p.getGroup());
+				f.save();
 				LoadFromFile();
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 	
 }

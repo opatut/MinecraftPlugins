@@ -12,7 +12,9 @@ public class TownDefense extends Plugin {
 
 	// PluginListeners
 	private SensorBlockListener mSensorBlockListener = new SensorBlockListener(
-			this);
+			this, "towndefense/sensors.properties");
+	//private WifiBlockListener mWifiBlockListener = new WifiBlockListener(
+		//	this, "towndefense/wifi.properties");
 
 	public void enable() {
 	}

@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class SpawnPoint {
 	Location location = new Location();
-	String group = "";
+	private String group = "";
 	
 	public SpawnPoint(String grp, String loc) {
 		//parse line
@@ -29,12 +29,12 @@ public class SpawnPoint {
 				Logger.getLogger("Minecraft").severe("Invalid Spawn Point Location String.");
 			}
 		}
-		group = grp;
+		setGroup(grp.toLowerCase());
 	}
 	
 	public SpawnPoint(String grp, Location loc) {
 		SetLocation(loc);
-		group = grp;
+		setGroup(grp.toLowerCase());
 	}
 	
 	public void SetLocation(Location l) {
@@ -49,5 +49,13 @@ public class SpawnPoint {
 		String s = location.x+":"+location.y+":"+location.z+":"+location.rotX+":"+location.rotY;
 		Logger.getLogger("Minecraft").info("LocString: " +s );
 		return s;
+	}
+
+	public void setGroup(String group) {
+		this.group = group.toLowerCase();
+	}
+
+	public String getGroup() {
+		return group.toLowerCase();
 	}
 }
